@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CareerCraft — Client Intake</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --ink: #0f0f0f;
+    --paper: #faf8f4;
+    --cream: #f2ede4;
+    --gold: #c8952a;
+    --gold-light: #f0d898;
+    --muted: #7a7267;
+    --border: #ddd8ce;
+    --success: #2e7d52;
+    --error: #c0392b;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 40px,
+      rgba(200,149,42,0.04) 40px,
+      rgba(200,149,42,0.04) 41px
+    );
+  }
+  .header-inner { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+  .brand {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+  .brand span { color: var(--gold); }
+  .tagline {
+    font-size: 0.95rem;
+    color: rgba(250,248,244,0.65);
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* ─── PROGRESS ─── */
+  .progress-wrap {
+    background: var(--cream);
+    border-bottom: 1px solid var(--border);
+    padding: 1.2rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .progress-inner { max-width: 720px; margin: 0 auto; }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.6rem;
+  }
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), #e8a93a);
+    border-radius: 2px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0%;
+  }
+
+  /* ─── LAYOUT ─── */
+  main { max-width: 720px; margin: 0 auto; padding: 2.5rem 1.5rem 6rem; }
+
+  /* ─── SECTIONS ─── */
+  .section {
+    margin-bottom: 3.5rem;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .section.visible { opacity: 1; transform: translateY(0); }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.8rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-number {
+    width: 36px; height: 36px;
+    background: var(--ink);
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .section-desc {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 0.15rem;
+  }
+
+  /* ─── FIELDS ─── */
+  .field { margin-bottom: 1.6rem; }
+
+  label {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.01em;
+  }
+  label .required { color: var(--gold); margin-left: 2px; }
+  label .hint {
+    display: block;
+    font-weight: 400;
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 0.15rem;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="url"],
+  select,
+  textarea {
+    width: 100%;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    color: var(--ink);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(200,149,42,0.12);
+  }
+  textarea { resize: vertical; min-height: 100px; }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7267' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+    cursor: pointer;
+  }
+
+  /* ─── FIELD GRID ─── */
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  @media (max-width: 520px) { .field-row { grid-template-columns: 1fr; } }
+
+  /* ─── CHIP SELECTS ─── */
+  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.4rem; }
+  .chip {
+    padding: 0.4rem 0.9rem;
+    border: 1.5px solid var(--border);
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--muted);
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.18s;
+    user-select: none;
+  }
+  .chip:hover { border-color: var(--gold); color: var(--gold); }
+  .chip.selected {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--gold);
+  }
+
+  /* ─── RATING SCALE ─── */
+  .rating-scale { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.4rem; }
+  .rating-btn {
+    width: 40px; height: 40px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.18s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .rating-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .rating-btn.selected { background: var(--ink); border-color: var(--ink); color: var(--gold-light); }
+  .rating-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  /* ─── CHARACTER COUNT ─── */
+  .char-count {
+    text-align: right;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+    transition: color 0.2s;
+  }
+  .char-count.warn { color: var(--error); }
+
+  /* ─── CALLOUT BOX ─── */
+  .callout {
+    background: linear-gradient(135deg, #fffbf0, #fef6e0);
+    border: 1px solid var(--gold-light);
+    border-left: 3px solid var(--gold);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    font-size: 0.85rem;
+    color: #6b5a2a;
+    margin-bottom: 1.6rem;
+    line-height: 1.5;
+  }
+  .callout strong { color: #5a4a1a; }
+
+  /* ─── SUBMIT ─── */
+  .submit-wrap {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+  }
+  .submit-btn {
+    background: var(--ink);
+    color: var(--gold);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 10px;
+    padding: 1rem 3rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .submit-btn:hover {
+    background: #1e1e1e;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  }
+  .submit-btn:active { transform: translateY(0); }
+  .submit-note {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 0.8rem;
+  }
+
+  /* ─── SUCCESS STATE ─── */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 5rem 2rem;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+  .success-screen.show { display: block; }
+  .success-icon {
+    width: 64px; height: 64px;
+    background: var(--ink);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 1.8rem;
+  }
+  .success-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    margin-bottom: 0.8rem;
+  }
+  .success-body { font-size: 0.95rem; color: var(--muted); line-height: 1.7; }
+
+  /* ─── VALIDATION ─── */
+  .field-error {
+    font-size: 0.75rem;
+    color: var(--error);
+    margin-top: 0.3rem;
+    display: none;
+  }
+  input.invalid, textarea.invalid, select.invalid {
+    border-color: var(--error);
+  }
+
+  /* ─── COPY BUTTON ─── */
+  .copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--gold);
+    background: none;
+    border: 1px solid var(--gold-light);
+    border-radius: 6px;
+    padding: 0.3rem 0.7rem;
+    cursor: pointer;
+    transition: all 0.18s;
+    margin-top: 0.5rem;
+  }
+  .copy-btn:hover { background: var(--gold-light); }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 2rem 0;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">Career<span>Craft</span></div>
+    <div class="tagline">CV &amp; LinkedIn Rewrite — Client Intake Form</div>
+  </div>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-inner">
+    <div class="progress-meta">
+      <span id="progress-label">Section 1 of 8</span>
+      <span id="progress-pct">0% complete</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+</div>
+
+<main id="form-main">
+
+  <div class="callout">
+    <strong>⏱ Takes about 15–20 minutes.</strong> The more detail you give here, the better your rewrite will be. There are no wrong answers — write like you're talking to a trusted colleague, not a robot.
+  </div>
+
+  <!-- ══ SECTION 1: BASICS ══ -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <div class="section-number">1</div>
+      <div>
+        <div class="section-title">The Basics</div>
+        <div class="section-desc">Your name, contact details, and current situation</div>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Full Name <span class="required">*</span></label>
+        <input type="text" id="name" placeholder="e.g. Aravind Ramachandran" required />
+        <div class="field-error" id="err-name">Please enter your full name.</div>
+      </div>
+      <div class="field">
+        <label>Email Address <span class="required">*</span></label>
+        <input type="email" id="email" placeholder="you@example.com" required />
+        <div class="field-error" id="err-email">Please enter a valid email.</div>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>City / Country<span class="required">*</span>
+          <span class="hint">Where you're currently based</span>
+        </label>
+        <input type="text" id="location" placeholder="e.g. Karlsruhe, Germany" required />
+      </div>
+      <div class="field">
+        <label>LinkedIn URL
+          <span class="hint">Paste your profile link if you have one</span>
+        </label>
+        <input type="url" id="linkedin" placeholder="linkedin.com/in/yourname" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Current Status <span class="required">*</span></label>
+      <select id="status" required>
+        <option value="">— Select your situation —</option>
+        <option>Student (Bachelor's)</option>
+        <option>Student (Master's)</option>
+        <option>Student (PhD)</option>
+        <option>Recent graduate (less than 1 year)</option>
+        <option>Employed, actively job hunting</option>
+        <option>Employed, passively open to opportunities</option>
+        <option>Currently unemployed</option>
+        <option>Freelancer / Self-employed</option>
+        <option>Career changer</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>When do you need the rewrite delivered?</label>
+      <div class="chips" id="chips-timeline">
+        <div class="chip" data-group="timeline">ASAP (within 48h)</div>
+        <div class="chip" data-group="timeline">Within 1 week</div>
+        <div class="chip" data-group="timeline">Within 2 weeks</div>
+        <div class="chip" data-group="timeline">No rush</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 2: TARGET ROLE ══ -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <div class="section-number">2</div>
+      <div>
+        <div class="section-title">Your Target Role</div>
+        <div class="section-desc">The more specific here, the more targeted your rewrite</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>What job title(s) are you applying for? <span class="required">*</span>
+        <span class="hint">Be as specific as possible. List up to 3.</span>
+      </label>
+      <input type="text" id="job-title" placeholder="e.g. Mechanical Engineer, R&D Engineer, Masterarbeit — Structural Simulation" required />
+    </div>
+
+    <div class="field">
+      <label>Which industries are you targeting? <span class="required">*</span>
+        <span class="hint">Select all that apply</span>
+      </label>
+      <div class="chips" id="chips-industry">
+        <div class="chip" data-group="industry">Automotive</div>
+        <div class="chip" data-group="industry">Mechanical Engineering</div>
+        <div class="chip" data-group="industry">Industrial / Manufacturing</div>
+        <div class="chip" data-group="industry">Aerospace & Defense</div>
+        <div class="chip" data-group="industry">Energy / Renewables</div>
+        <div class="chip" data-group="industry">Medical Devices</div>
+        <div class="chip" data-group="industry">Consulting</div>
+        <div class="chip" data-group="industry">Software / Tech</div>
+        <div class="chip" data-group="industry">Finance / Banking</div>
+        <div class="chip" data-group="industry">Other</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Which specific companies are you targeting?
+        <span class="hint">List up to 5. This helps us tailor the language and keywords.</span>
+      </label>
+      <input type="text" id="companies" placeholder="e.g. Bosch, Schaeffler, SEW-Eurodrive, Daimler Truck, Porsche" />
+    </div>
+
+    <div class="field">
+      <label>Which countries / regions are you targeting? <span class="required">*</span></label>
+      <div class="chips" id="chips-region">
+        <div class="chip" data-group="region">Germany (DACH)</div>
+        <div class="chip" data-group="region">UK</div>
+        <div class="chip" data-group="region">Netherlands</div>
+        <div class="chip" data-group="region">Scandinavia</div>
+        <div class="chip" data-group="region">USA / Canada</div>
+        <div class="chip" data-group="region">Rest of Europe</div>
+        <div class="chip" data-group="region">Asia</div>
+        <div class="chip" data-group="region">Worldwide / Remote</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>What format do you need? <span class="required">*</span></label>
+      <div class="chips" id="chips-format">
+        <div class="chip" data-group="format">English CV</div>
+        <div class="chip" data-group="format">German Lebenslauf</div>
+        <div class="chip" data-group="format">Both</div>
+        <div class="chip" data-group="format">LinkedIn only</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Do you have a job description to optimise against?
+        <span class="hint">Paste the full text of 1–2 job ads you're applying to. This is the single biggest factor in ATS performance.</span>
+      </label>
+      <textarea id="jd" placeholder="Paste the job description(s) here..." rows="6"></textarea>
+      <div id="jd-count" class="char-count">0 characters</div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 3: EDUCATION ══ -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <div class="section-number">3</div>
+      <div>
+        <div class="section-title">Education</div>
+        <div class="section-desc">Degrees, institutions, and anything academically relevant</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>List your degrees, in reverse chronological order <span class="required">*</span>
+        <span class="hint">Degree name → University → Country → Years → GPA (if strong). One per line.</span>
+      </label>
+      <textarea id="education" placeholder="M.Sc. Mechanical Engineering → KIT (Karlsruhe Institute of Technology) → Germany → 2022–present → GPA: X.X&#10;B.Eng. Mechanical Engineering → [University] → [Country] → 2018–2022 → GPA: X.X" rows="5" required></textarea>
+    </div>
+
+    <div class="field">
+      <label>Thesis topic (if applicable)
+        <span class="hint">Even if ongoing or not yet started, give the working title or research area</span>
+      </label>
+      <input type="text" id="thesis" placeholder="e.g. Structural Fatigue Analysis of Composite Materials using FEM — ongoing" />
+    </div>
+
+    <div class="field">
+      <label>Relevant courses, projects, or academic achievements
+        <span class="hint">Anything that signals technical depth — final year projects, competitions, academic awards, relevant modules</span>
+      </label>
+      <textarea id="academic-extra" placeholder="e.g. Formula Student team — designed suspension geometry&#10;Winner of KIT Innovation Award 2023&#10;Relevant modules: FEM, CAD/CAM, Fluid Mechanics, Control Systems" rows="4"></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 4: WORK EXPERIENCE ══ -->
+  <div class="section" id="s4">
+    <div class="section-header">
+      <div class="section-number">4</div>
+      <div>
+        <div class="section-title">Work Experience</div>
+        <div class="section-desc">Every role matters — internships, part-time, freelance, research assistantships</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Don't just list duties.</strong> For each role, try to answer: What did you actually do? What changed because of your work? What tools or methods did you use? Numbers make a huge difference — even rough ones.
+    </div>
+
+    <div class="field">
+      <label>Role 1 — Most Recent <span class="required">*</span>
+        <span class="hint">Job title → Company → Location → Dates → What you did (3–5 bullet points worth of detail)</span>
+      </label>
+      <textarea id="role1" placeholder="Data Analyst (part-time) → DZ Bank AG → Ettlingen, Germany → Oct 2024–present&#10;&#10;- Analysed transaction data using Python and SQL to identify anomalies&#10;- Built automated reporting dashboards in Excel and Power BI&#10;- Reduced manual reporting time by ~40% through process automation" rows="7" required></textarea>
+    </div>
+
+    <div class="field">
+      <label>Role 2
+        <span class="hint">Same format as above</span>
+      </label>
+      <textarea id="role2" placeholder="Research Assistant → KIT → Karlsruhe → [Dates]&#10;&#10;- What you worked on, what methods you used, what the outcome was" rows="6"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Role 3 (and any others)
+        <span class="hint">Add as many as relevant. Earlier roles can be briefer.</span>
+      </label>
+      <textarea id="role3" placeholder="Data Analyst → Bureau Veritas → [Location] → [Dates]&#10;&#10;Add further roles below if needed..." rows="6"></textarea>
+    </div>
+
+    <div class="field">
+      <label>What is the single biggest thing you achieved in your career so far? <span class="required">*</span>
+        <span class="hint">It can be from any job, project, or academic work. Think: a problem you solved, a result you delivered, something you built.</span>
+      </label>
+      <textarea id="achievement" placeholder="e.g. I built an automated data pipeline that cut a weekly 6-hour manual process down to 20 minutes, which was adopted across 3 departments at DZ Bank." rows="4" required></textarea>
+      <div id="achievement-count" class="char-count">0 / 500 characters</div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 5: SKILLS ══ -->
+  <div class="section" id="s5">
+    <div class="section-header">
+      <div class="section-number">5</div>
+      <div>
+        <div class="section-title">Skills & Tools</div>
+        <div class="section-desc">Technical and software skills — be honest about your level</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Technical / Engineering Skills <span class="required">*</span>
+        <span class="hint">List tools, software, methods, and technologies. Separate with commas.</span>
+      </label>
+      <input type="text" id="tech-skills" placeholder="e.g. SolidWorks, CATIA, ANSYS, MATLAB, Python, C++, FEM, CAD/CAM, Lean Manufacturing" required />
+    </div>
+
+    <div class="field">
+      <label>Data / Software Skills
+        <span class="hint">Programming languages, data tools, platforms</span>
+      </label>
+      <input type="text" id="data-skills" placeholder="e.g. Python (pandas, NumPy), SQL, Power BI, Excel, R, MATLAB, Git" />
+    </div>
+
+    <div class="field">
+      <label>How would you rate your overall technical skill level?</label>
+      <div class="rating-scale" id="rating-tech">
+        <button class="rating-btn" data-val="1">1</button>
+        <button class="rating-btn" data-val="2">2</button>
+        <button class="rating-btn" data-val="3">3</button>
+        <button class="rating-btn" data-val="4">4</button>
+        <button class="rating-btn" data-val="5">5</button>
+        <button class="rating-btn" data-val="6">6</button>
+        <button class="rating-btn" data-val="7">7</button>
+        <button class="rating-btn" data-val="8">8</button>
+        <button class="rating-btn" data-val="9">9</button>
+        <button class="rating-btn" data-val="10">10</button>
+      </div>
+      <div class="rating-labels"><span>Beginner</span><span>Expert</span></div>
+    </div>
+
+    <div class="field">
+      <label>Languages <span class="required">*</span>
+        <span class="hint">Include level: Native / Fluent / Professional / Conversational / Basic</span>
+      </label>
+      <input type="text" id="languages" placeholder="e.g. English (Native), German (B2 – Professional), Tamil (Native)" required />
+    </div>
+
+    <div class="field">
+      <label>Certifications, courses, or licenses
+        <span class="hint">Include platform and year if relevant (Coursera, Udemy, professional body, etc.)</span>
+      </label>
+      <textarea id="certs" placeholder="e.g. Google Data Analytics Certificate (Coursera, 2023)&#10;AWS Cloud Practitioner (2024)&#10;Forklift License" rows="3"></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 6: PERSONAL BRAND ══ -->
+  <div class="section" id="s6">
+    <div class="section-header">
+      <div class="section-number">6</div>
+      <div>
+        <div class="section-title">Your Personal Brand</div>
+        <div class="section-desc">What makes you distinctly you — this shapes the tone and narrative</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>How would your closest colleague describe you in 3 words?</label>
+      <input type="text" id="three-words" placeholder="e.g. Analytical, reliable, curious" />
+    </div>
+
+    <div class="field">
+      <label>What kind of work energises you most? <span class="required">*</span>
+        <span class="hint">This helps us write a profile that sounds genuine, not generic.</span>
+      </label>
+      <textarea id="energised" placeholder="e.g. I love the moment when a complex system actually works — debugging simulations, finding the inefficiency in a process, turning messy data into a clear answer. I'm happiest when the problem is hard and the solution has real consequences." rows="4" required></textarea>
+    </div>
+
+    <div class="field">
+      <label>What do you want employers to feel when they read your CV?</label>
+      <div class="chips" id="chips-feeling">
+        <div class="chip" data-group="feeling">Impressed by technical depth</div>
+        <div class="chip" data-group="feeling">Confident you'll deliver results</div>
+        <div class="chip" data-group="feeling">Intrigued — they want to meet you</div>
+        <div class="chip" data-group="feeling">Safe — low risk, high reliability</div>
+        <div class="chip" data-group="feeling">Excited — this person is different</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Is there anything you want to downplay or omit?
+        <span class="hint">A gap in employment, a short stint, a degree you didn't finish, anything you'd rather not lead with</span>
+      </label>
+      <textarea id="downplay" placeholder="e.g. I left my first job after 3 months — I'd rather not draw attention to it. I can explain in an interview." rows="3"></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 7: LINKEDIN SPECIFIC ══ -->
+  <div class="section" id="s7">
+    <div class="section-header">
+      <div class="section-number">7</div>
+      <div>
+        <div class="section-title">LinkedIn Specifics</div>
+        <div class="section-desc">Skip this section if you only need a CV rewrite</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>What does your current LinkedIn headline say?
+        <span class="hint">Copy it exactly, or write "none" if you haven't set one</span>
+      </label>
+      <input type="text" id="current-headline" placeholder="e.g. M.Sc. Student at KIT | Mechanical Engineering" />
+    </div>
+
+    <div class="field">
+      <label>What tone do you want on LinkedIn?</label>
+      <div class="chips" id="chips-tone">
+        <div class="chip" data-group="tone">Professional & formal</div>
+        <div class="chip" data-group="tone">Warm & approachable</div>
+        <div class="chip" data-group="tone">Confident & direct</div>
+        <div class="chip" data-group="tone">Thoughtful & curious</div>
+        <div class="chip" data-group="tone">Technical & precise</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>What should someone do after reading your LinkedIn profile?</label>
+      <div class="chips" id="chips-cta">
+        <div class="chip" data-group="cta">Invite me to interview</div>
+        <div class="chip" data-group="cta">Send me a thesis/internship offer</div>
+        <div class="chip" data-group="cta">Connect and start a conversation</div>
+        <div class="chip" data-group="cta">Visit my portfolio or GitHub</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Portfolio, GitHub, or personal website URL</label>
+      <input type="url" id="portfolio" placeholder="github.com/yourname or yourportfolio.com" />
+    </div>
+
+    <div class="field">
+      <label>Anything specific you want included in your LinkedIn About section?
+        <span class="hint">A specific project, a cause you care about, a unique angle on your background</span>
+      </label>
+      <textarea id="about-notes" placeholder="e.g. I want to mention my Formula Student experience — it was formative. I also want to acknowledge being an international student navigating the German market, because I think it shows resilience." rows="4"></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 8: FINAL NOTES ══ -->
+  <div class="section" id="s8">
+    <div class="section-header">
+      <div class="section-number">8</div>
+      <div>
+        <div class="section-title">Anything Else</div>
+        <div class="section-desc">Your chance to say what the form didn't ask</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>What frustrates you most about your current CV or LinkedIn?
+        <span class="hint">Be blunt. This tells us exactly what to fix.</span>
+      </label>
+      <textarea id="frustrations" placeholder="e.g. It looks generic. Every bullet point just lists what I did, not what I achieved. I also think the formatting looks dated and gets rejected by ATS scanners." rows="4"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Is there a CV or LinkedIn profile you admire?
+        <span class="hint">Link to it, describe it, or name the person. Knowing what good looks like to you helps us match your taste.</span>
+      </label>
+      <textarea id="inspiration" placeholder="e.g. I really like how [Person X] on LinkedIn tells a clear narrative — it's not just a list of jobs, it reads like a story with direction." rows="3"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Anything else you want us to know?</label>
+      <textarea id="anything-else" placeholder="Visa status, relocation preferences, salary expectations (for cover letter context), career goals beyond the immediate application, special circumstances..." rows="4"></textarea>
+    </div>
+
+    <div class="field">
+      <label>How did you hear about CareerCraft?</label>
+      <select id="referral">
+        <option value="">— Select —</option>
+        <option>LinkedIn post</option>
+        <option>Reddit</option>
+        <option>Friend / colleague referral</option>
+        <option>University career office</option>
+        <option>Google search</option>
+        <option>Other</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="submit-wrap">
+    <button class="submit-btn" onclick="handleSubmit()">Submit My Answers →</button>
+    <div class="submit-note">You'll receive a confirmation email within 15 minutes. Your rewrite is delivered within 48 hours.</div>
+  </div>
+
+</main>
+
+<div class="success-screen" id="success">
+  <div class="success-icon">✦</div>
+  <div class="success-title" style="font-family:'Playfair Display',serif">You're in.</div>
+  <p class="success-body">
+    Your answers have been received.<br><br>
+    Expect a confirmation email shortly, and your full CV &amp; LinkedIn rewrite within <strong>48 hours</strong>.<br><br>
+    If you have questions in the meantime, reply to that email directly.
+  </p>
+  <div style="margin-top:2rem">
+    <button class="copy-btn" onclick="copyAnswers()">📋 Copy my answers as text</button>
+  </div>
+</div>
+
+<script>
+  // ── SECTION OBSERVER ──
+  const sections = document.querySelectorAll('.section');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  sections.forEach(s => observer.observe(s));
+
+  // ── PROGRESS TRACKING ──
+  const totalSections = 8;
+  function updateProgress() {
+    const visible = document.querySelectorAll('.section.visible').length;
+    const pct = Math.round((visible / totalSections) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + '% complete';
+    const current = Math.min(visible + 1, totalSections);
+    document.getElementById('progress-label').textContent = `Section ${current} of ${totalSections}`;
+  }
+  window.addEventListener('scroll', updateProgress);
+
+  // ── CHIPS ──
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const group = chip.dataset.group;
+      const singleGroups = ['timeline','format','tone','cta'];
+      if (singleGroups.includes(group)) {
+        document.querySelectorAll(`.chip[data-group="${group}"]`).forEach(c => c.classList.remove('selected'));
+      }
+      chip.classList.toggle('selected');
+      updateProgress();
+    });
+  });
+
+  // ── RATING BUTTONS ──
+  document.querySelectorAll('.rating-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const parent = btn.closest('.rating-scale');
+      parent.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+
+  // ── CHAR COUNTS ──
+  const jdEl = document.getElementById('jd');
+  const jdCount = document.getElementById('jd-count');
+  jdEl.addEventListener('input', () => {
+    jdCount.textContent = jdEl.value.length + ' characters';
+  });
+
+  const achEl = document.getElementById('achievement');
+  const achCount = document.getElementById('achievement-count');
+  achEl.addEventListener('input', () => {
+    const len = achEl.value.length;
+    achCount.textContent = len + ' / 500 characters';
+    achCount.classList.toggle('warn', len > 500);
+  });
+
+  // ── VALIDATION ──
+  function validate() {
+    const required = [
+      { id: 'name', errId: 'err-name', msg: 'Please enter your full name.' },
+      { id: 'email', errId: 'err-email', msg: 'Please enter a valid email.' },
+      { id: 'location', errId: null },
+      { id: 'status', errId: null },
+      { id: 'job-title', errId: null },
+      { id: 'education', errId: null },
+      { id: 'role1', errId: null },
+      { id: 'achievement', errId: null },
+      { id: 'tech-skills', errId: null },
+      { id: 'languages', errId: null },
+      { id: 'energised', errId: null },
+    ];
+    let valid = true;
+    required.forEach(f => {
+      const el = document.getElementById(f.id);
+      if (!el) return;
+      if (!el.value.trim()) {
+        el.classList.add('invalid');
+        if (f.errId) {
+          const err = document.getElementById(f.errId);
+          if (err) err.style.display = 'block';
+        }
+        if (valid) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+        valid = false;
+      } else {
+        el.classList.remove('invalid');
+        if (f.errId) {
+          const err = document.getElementById(f.errId);
+          if (err) err.style.display = 'none';
+        }
+      }
+    });
+    return valid;
+  }
+
+  // ── SUBMIT ──
+  function handleSubmit() {
+    if (!validate()) return;
+    document.getElementById('form-main').style.display = 'none';
+    document.querySelector('.progress-wrap').style.display = 'none';
+    const success = document.getElementById('success');
+    success.classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── COPY ANSWERS ──
+  function copyAnswers() {
+    const fields = [
+      ['Full Name', 'name'], ['Email', 'email'], ['Location', 'location'],
+      ['LinkedIn', 'linkedin'], ['Status', 'status'], ['Job Title(s)', 'job-title'],
+      ['Target Companies', 'companies'], ['Job Description', 'jd'],
+      ['Education', 'education'], ['Thesis', 'thesis'], ['Academic Extras', 'academic-extra'],
+      ['Role 1', 'role1'], ['Role 2', 'role2'], ['Role 3+', 'role3'],
+      ['Biggest Achievement', 'achievement'], ['Technical Skills', 'tech-skills'],
+      ['Data Skills', 'data-skills'], ['Languages', 'languages'],
+      ['Certifications', 'certs'], ['Three Words', 'three-words'],
+      ['What Energises You', 'energised'], ['What to Downplay', 'downplay'],
+      ['Current Headline', 'current-headline'], ['Portfolio', 'portfolio'],
+      ['LinkedIn About Notes', 'about-notes'], ['Frustrations', 'frustrations'],
+      ['Inspiration', 'inspiration'], ['Anything Else', 'anything-else'],
+    ];
+    let out = '=== CAREERCRAFT CLIENT INTAKE ===\n\n';
+    fields.forEach(([label, id]) => {
+      const el = document.getElementById(id);
+      if (el && el.value.trim()) out += `${label}:\n${el.value.trim()}\n\n`;
+    });
+
+    // Add chip selections
+    const groups = ['timeline','industry','region','format','feeling','tone','cta'];
+    groups.forEach(g => {
+      const selected = [...document.querySelectorAll(`.chip[data-group="${g}"].selected`)].map(c => c.textContent);
+      if (selected.length) out += `${g.charAt(0).toUpperCase()+g.slice(1)}: ${selected.join(', ')}\n\n`;
+    });
+
+    const rating = document.querySelector('.rating-btn.selected');
+    if (rating) out += `Technical Skill Rating: ${rating.dataset.val}/10\n\n`;
+
+    navigator.clipboard.writeText(out).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => btn.textContent = '📋 Copy my answers as text', 2000);
+    });
+  }
+
+  // Input events to clear invalid state
+  document.querySelectorAll('input, textarea, select').forEach(el => {
+    el.addEventListener('input', () => el.classList.remove('invalid'));
+  });
+</script>
+</body>
+</html>
